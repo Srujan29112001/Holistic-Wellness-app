@@ -13,7 +13,7 @@
  * - Dynamic rescheduling
  */
 
-import { callClaude } from '../utils/anthropic-client';
+import { callClaude, CLAUDE_MODELS } from '../utils/anthropic-client';
 
 // ==================== Types ====================
 
@@ -700,11 +700,11 @@ ${conflicts.length > 0 ? 'Resolve conflicts and suggest improvements.' : 'Sugges
 Return a JSON array of optimized activities with adjusted times, or null if no changes needed.`;
 
       const response = await callClaude(prompt, {
-        model: 'haiku',
+        model: CLAUDE_MODELS.HAIKU,
         maxTokens: 1500,
       });
 
-      const jsonMatch = response.match(/\[[\s\S]*\]/);
+      const jsonMatch = response.content.match(/\[[\s\S]*\]/);
       if (jsonMatch) {
         return JSON.parse(jsonMatch[0]);
       }

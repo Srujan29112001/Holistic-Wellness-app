@@ -21,9 +21,11 @@ import {
   getAuspiciousTimes,
   getSunSign,
   getPlanetPositions,
-  type ZodiacSign,
   type BirthDetails,
 } from '../apis/vedic-astro-client';
+
+// Define ZodiacSign type locally
+export type ZodiacSign = 'aries' | 'taurus' | 'gemini' | 'cancer' | 'leo' | 'virgo' | 'libra' | 'scorpio' | 'sagittarius' | 'capricorn' | 'aquarius' | 'pisces';
 
 // ==================== Types ====================
 

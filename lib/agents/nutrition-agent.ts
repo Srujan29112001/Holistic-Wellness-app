@@ -12,15 +12,23 @@
  * - Provide ingredient substitutions
  */
 
-import { callClaude, callClaudeConversation, ClaudeMessage } from '../utils/anthropic-client';
+import { callClaude, callClaudeConversation, ClaudeMessage, CLAUDE_MODELS } from '../utils/anthropic-client';
 import {
   searchUSDAFoods,
   getUSDAFoodDetails,
   getMacros,
   calculateRecipeNutrition,
-  type USDAFood,
-  type Macros
+  type USDAFood
 } from '../apis/usda-client';
+
+// Define Macros type locally
+export interface Macros {
+  calories: number;
+  protein: number;
+  carbs: number;
+  fat: number;
+  fiber?: number;
+}
 
 // ==================== Types ====================
 
@@ -194,12 +202,12 @@ Format your response as a JSON array of meals. Example:
 Ensure variety, balance, and adherence to all restrictions. Be creative but practical.`;
 
     const response = await callClaude(prompt, {
-      model: 'haiku', // Cheaper model for ideation
+      model: CLAUDE_MODELS.HAIKU, // Cheaper model for ideation
       maxTokens: 2000,
     });
 
     // Parse JSON response
-    const jsonMatch = response.match(/\[[\s\S]*\]/);
+    const jsonMatch = response.content.match(/\[[\s\S]*\]/);
     if (!jsonMatch) {
       throw new Error('Failed to parse meal concepts from Claude response');
     }
@@ -318,7 +326,7 @@ Ensure variety, balance, and adherence to all restrictions. Be creative but prac
         total.protein += meal.nutrition.protein || 0;
         total.carbs += meal.nutrition.carbs || 0;
         total.fat += meal.nutrition.fat || 0;
-        total.fiber += meal.nutrition.fiber || 0;
+        total.fiber = (total.fiber || 0) + (meal.nutrition.fiber || 0);
       }
     }
 
@@ -328,7 +336,7 @@ Ensure variety, balance, and adherence to all restrictions. Be creative but prac
       protein: Math.round(total.protein * 10) / 10,
       carbs: Math.round(total.carbs * 10) / 10,
       fat: Math.round(total.fat * 10) / 10,
-      fiber: Math.round(total.fiber * 10) / 10,
+      fiber: Math.round((total.fiber || 0) * 10) / 10,
     };
   }
 
@@ -394,7 +402,7 @@ Ensure variety, balance, and adherence to all restrictions. Be creative but prac
     }
 
     // Fiber
-    if (nutrition.fiber < 25) {
+    if (nutrition.fiber && nutrition.fiber < 25) {
       notes.push(`Fiber is low (${nutrition.fiber}g). Consider adding vegetables or whole grains.`);
     }
 
@@ -445,7 +453,7 @@ Ensure variety, balance, and adherence to all restrictions. Be creative but prac
     // Nutrition tags
     if (nutrition.protein > 25) tags.push('high-protein');
     if (nutrition.carbs < 30) tags.push('low-carb');
-    if (nutrition.fiber > 8) tags.push('high-fiber');
+    if (nutrition.fiber && nutrition.fiber > 8) tags.push('high-fiber');
     if (nutrition.calories < 350) tags.push('light');
 
     // Prep time
@@ -516,7 +524,7 @@ Ensure variety, balance, and adherence to all restrictions. Be creative but prac
       protein: Math.round(base.protein * factor * 10) / 10,
       carbs: Math.round(base.carbs * factor * 10) / 10,
       fat: Math.round(base.fat * factor * 10) / 10,
-      fiber: Math.round(base.fiber * factor * 10) / 10,
+      fiber: Math.round((base.fiber || 0) * factor * 10) / 10,
     };
   }
 
@@ -532,12 +540,12 @@ Profile: ${JSON.stringify(profile, null, 2)}
 Answer the user's nutrition question professionally and accurately. Use USDA data when available. Keep responses concise but informative.`;
 
     const response = await callClaude(question, {
-      model: 'sonnet',
+      model: CLAUDE_MODELS.SONNET,
       systemPrompt,
       maxTokens: 500,
     });
 
-    return response;
+    return response.content;
   }
 }
 

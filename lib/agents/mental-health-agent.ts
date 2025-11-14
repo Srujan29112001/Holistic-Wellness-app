@@ -13,7 +13,7 @@
  * - Emotional pattern recognition
  */
 
-import { callClaude, ClaudeMessage } from '../utils/anthropic-client';
+import { callClaude, ClaudeMessage, CLAUDE_MODELS } from '../utils/anthropic-client';
 
 // ==================== Types ====================
 
@@ -132,12 +132,12 @@ Format as JSON array:
 Focus on evidence-based practices. Be empathetic but concise.`;
 
     const response = await callClaude(prompt, {
-      model: 'haiku',
+      model: CLAUDE_MODELS.HAIKU,
       maxTokens: 1500,
     });
 
     // Parse JSON
-    const jsonMatch = response.match(/\[[\s\S]*\]/);
+    const jsonMatch = response.content.match(/\[[\s\S]*\]/);
     if (!jsonMatch) {
       throw new Error('Failed to parse recommendations from Claude');
     }
@@ -185,11 +185,11 @@ Format as JSON:
 }`;
 
     const response = await callClaude(prompt, {
-      model: 'haiku',
+      model: CLAUDE_MODELS.HAIKU,
       maxTokens: 800,
     });
 
-    const jsonMatch = response.match(/\{[\s\S]*\}/);
+    const jsonMatch = response.content.match(/\{[\s\S]*\}/);
     if (!jsonMatch) {
       throw new Error('Failed to parse meditation recommendation');
     }
@@ -282,11 +282,11 @@ Format as JSON:
 }`;
 
     const response = await callClaude(prompt, {
-      model: 'sonnet',
+      model: CLAUDE_MODELS.SONNET,
       maxTokens: 800,
     });
 
-    const jsonMatch = response.match(/\{[\s\S]*\}/);
+    const jsonMatch = response.content.match(/\{[\s\S]*\}/);
     if (!jsonMatch) {
       throw new Error('Failed to parse CBT exercise');
     }
@@ -322,11 +322,11 @@ Format as JSON:
 }`;
 
     const response = await callClaude(prompt, {
-      model: 'haiku',
+      model: CLAUDE_MODELS.HAIKU,
       maxTokens: 500,
     });
 
-    const jsonMatch = response.match(/\{[\s\S]*\}/);
+    const jsonMatch = response.content.match(/\{[\s\S]*\}/);
     if (!jsonMatch) {
       throw new Error('Failed to parse journal analysis');
     }
@@ -344,11 +344,11 @@ Format as JSON array of strings:
 ["What small moment brought you joy today?", "...", "..."]`;
 
     const response = await callClaude(prompt, {
-      model: 'haiku',
+      model: CLAUDE_MODELS.HAIKU,
       maxTokens: 300,
     });
 
-    const jsonMatch = response.match(/\[[\s\S]*\]/);
+    const jsonMatch = response.content.match(/\[[\s\S]*\]/);
     if (!jsonMatch) {
       throw new Error('Failed to parse gratitude prompts');
     }
@@ -371,12 +371,12 @@ ${recentMoods ? `Recent mood average: ${this.average(recentMoods.map(m => m.mood
 Provide supportive, evidence-based responses. Always encourage professional help for serious concerns. Be empathetic and non-judgmental.`;
 
     const response = await callClaude(question, {
-      model: 'sonnet',
+      model: CLAUDE_MODELS.SONNET,
       systemPrompt,
       maxTokens: 600,
     });
 
-    return response;
+    return response.content;
   }
 
   // ==================== Private Helpers ====================

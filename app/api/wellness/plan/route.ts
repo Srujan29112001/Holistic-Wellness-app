@@ -163,13 +163,18 @@ export async function POST(request: NextRequest) {
       spiritualGuidance = await spiritualAgent.generateDailyGuidance();
     }
 
-    // Use Coordinator to generate summary
-    const coordinator = new CoordinatorAgent();
-    const summary = await coordinator.synthesizeResults({
-      nutrition: mealPlan,
-      mental: mentalWellness,
-      spiritual: spiritualGuidance,
-    });
+    // Generate simple summary
+    let summary = 'Your personalized wellness plan for today.';
+
+    if (mealPlan) {
+      summary += ` Nutrition: ${mealPlan.meals.length} meals planned.`;
+    }
+    if (mentalWellness) {
+      summary += ` Mental wellness activities included.`;
+    }
+    if (spiritualGuidance) {
+      summary += ` Spiritual guidance provided.`;
+    }
 
     // Save plan to database
     const { error: insertError } = await supabase

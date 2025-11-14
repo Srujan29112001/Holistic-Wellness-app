@@ -295,7 +295,7 @@ Return only a JSON array of required domain strings.`,
   /**
    * Synthesize results from multiple agents into coherent narrative
    */
-  private async synthesizeResults(
+  async synthesizeResults(
     request: string,
     agentResponses: Map<AgentRole, AgentResponse>,
     context: AgentContext

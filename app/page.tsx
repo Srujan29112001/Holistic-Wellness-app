@@ -50,12 +50,18 @@ export default function Home() {
         </div>
 
         <div className="mt-8 flex gap-4">
-          <button className="px-8 py-3 bg-gradient-to-r from-green-500 to-indigo-500 text-white font-semibold rounded-lg hover:opacity-90 transition-opacity">
+          <a
+            href="/onboarding"
+            className="px-8 py-3 bg-gradient-to-r from-green-500 to-indigo-500 text-white font-semibold rounded-lg hover:opacity-90 transition-opacity"
+          >
             Get Started
-          </button>
-          <button className="px-8 py-3 border-2 border-indigo-500 text-indigo-500 font-semibold rounded-lg hover:bg-indigo-50 transition-colors">
+          </a>
+          <a
+            href="#features"
+            className="px-8 py-3 border-2 border-indigo-500 text-indigo-500 font-semibold rounded-lg hover:bg-indigo-50 transition-colors"
+          >
             Learn More
-          </button>
+          </a>
         </div>
 
         <div className="mt-12 text-center text-sm text-gray-500">
